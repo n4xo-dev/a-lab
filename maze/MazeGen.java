@@ -75,10 +75,11 @@ public class MazeGen {
         return this.goalStatey;
     }
 
+    @Override
     public String toString() {
         String res = "";
         for(int x = 0; x < 82; ++x) {
-            res += "*";
+            res += "* ";
         }
         res += "\n";
         int i = 0, j;
@@ -86,14 +87,14 @@ public class MazeGen {
             res += "*";
             j = 0;
             while(j < 80) {
-                res += maze[i][j];
+                res += " " + maze[i][j];
                 ++j;
             }
-            res += "*\n";
+            res += " *\n";
             ++i;
         }
         for(int x = 0; x < 82; ++x) {
-            res += "*";
+            res += "* ";
         }
         return res;
     }
