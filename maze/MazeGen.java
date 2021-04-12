@@ -14,7 +14,7 @@ public class MazeGen {
         while(i < 60) {
             j = 0;
             while(j < 80) {
-                maze[i][j] = '+';
+                maze[i][j] = ' ';
                 ++j;
             }
             ++i;
@@ -43,14 +43,14 @@ public class MazeGen {
         Random ran = new Random();
         int randi = ran.nextInt(60);
         int randj = ran.nextInt(80);
-        while(maze[randi][randj] != '+') {
+        while(maze[randi][randj] != ' ') {
             randi = ran.nextInt(60);
             randj = ran.nextInt(80);
         }
         maze[randi][randj] = 'I';
         this.initialStatex = randi;
         this.initialStatey = randj;
-        while(maze[randi][randj] != '+') {
+        while(maze[randi][randj] != ' ') {
             randi = ran.nextInt(60);
             randj = ran.nextInt(80);
         }
@@ -98,3 +98,4 @@ public class MazeGen {
         return res;
     }
 }
+
