@@ -11,9 +11,9 @@ public class MazeGen {
     public MazeGen() {
         this.maze = new char[60][80];
         int i = 0, j;
-        while(i < 60) {
+        while (i < 60) {
             j = 0;
-            while(j < 80) {
+            while (j < 80) {
                 maze[i][j] = ' ';
                 ++j;
             }
@@ -26,11 +26,11 @@ public class MazeGen {
     private void generateObstacles() {
         Random ran = new Random();
         int i = 0, j;
-        while(i < 60) {
+        while (i < 60) {
             j = 0;
-            while(j < 80) {
+            while (j < 80) {
                 int random = ran.nextInt(10);
-                if(random < 3) {
+                if (random < 3) {
                     maze[i][j] = '*';
                 }
                 ++j;
@@ -43,14 +43,14 @@ public class MazeGen {
         Random ran = new Random();
         int randi = ran.nextInt(60);
         int randj = ran.nextInt(80);
-        while(maze[randi][randj] != ' ') {
+        while (maze[randi][randj] != ' ') {
             randi = ran.nextInt(60);
             randj = ran.nextInt(80);
         }
         maze[randi][randj] = 'I';
         this.initialStatex = randi;
         this.initialStatey = randj;
-        while(maze[randi][randj] != ' ') {
+        while (maze[randi][randj] != ' ') {
             randi = ran.nextInt(60);
             randj = ran.nextInt(80);
         }
@@ -74,6 +74,22 @@ public class MazeGen {
     public int getGoalStateY() {
         return this.goalStatey;
     }
+
+    /*
+    Implementation for showing path:
+    -- In AStar.java:
+
+    for each state in parent{
+        setState+(state.getX(), state.getY());
+    }
+
+    -- In MazeGen.java:
+
+    setState+(int x, int y){
+     maze[x,y] = '+';
+    }
+    */
+
 
     @Override
     public String toString() {
