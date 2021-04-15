@@ -4,55 +4,77 @@ import java.util.List;
 
 public class AStar {
 
-    private int[][] closedSet;  // Set of nodes already evaluated, for those not evaluated 0, for those evaluated 1 (or any number besides 0).
+    private Boolean[][] closedSet;  // Set of nodes already evaluated, for those not evaluated 0, for those evaluated 1 (or any number besides 0).
                                 // I think using an array like this can be very time-efficient when it comes to checking whether a node has been evaluated
                                 // Even though it may not be very space-efficient
-    private List<Pair> openSet; // Set of tentative nodes to be evaluated
-    private List<Pair> parent;  // Map of navigated nodes
-
+    private List<State> openSet; // Set of tentative nodes to be evaluated
+    private List<State> parent;  // Map of navigated nodes
+    /*
+    When the A* finishes, we should send parent to Maze,
+    change the content of maze with parent path, and call Maze.toString to show the results
+    */
 
     public AStar(MazeGen maze){
-        closedSet = new int[60][80];
+        closedSet = new Boolean[60][80];
         openSet = new ArrayList<>();
         parent = new ArrayList<>();
 
-        openSet.add(new Pair(maze.getInitialStateX(), maze.getInitialStateY()));
+        openSet.add(new State(maze.getInitialStateX(), maze.getInitialStateY(), maze));
 
         for (int i = 0; i < 60; i++){
             for (int j = 0; j < 80; j++){
-                closedSet[i][j] = 0;
+                closedSet[i][j] = false;
             }
         }
     }
-
-    public int manhattanDistance(MazeGen maze){
-        return Math.abs(maze.getInitialStateX() - maze.getGoalStateX()) + Math.abs(maze.getInitialStateY()) - maze.getGoalStateY();
+    
+    /*
+     * We will use g==0 as a conditional for checking if state is in openset and save time from iterating openset array
+     */
+    public int manhattanDistance(MazeGen maze, State current){
+        return Math.abs(current.getX() - maze.getGoalStateX()) + Math.abs(current.getY() - maze.getGoalStateY());
     }
 
-    // Class for pairs of coordinates
-    public class Pair{
+    // Class for States of coordinates
+    public class State{
         private int x;
         private int y;
+        private int g; // Cost from start to this node
+        private int f; // Cost from start to this node + h(this)
+        private int h; // h(this) manhattan distance
 
-        public Pair(int _x, int _y){
+        public State(int _x, int _y, MazeGen maze){
             x = _x;
             y = _y;
+            g = 0;  // Be careful for g starts with 0
+            f = 0;
+            h = manhattanDistance(maze, this); // h(this) is constant for the whole execution of the program, so it just needs to be calculated once;
         }
 
         public int getX() {
             return x;
         }
 
-        public void setX(int x) {
-            this.x = x;
-        }
-
         public int getY() {
             return y;
         }
 
-        public void setY(int y) {
-            this.y = y;
+        public int getG() {
+            return g;
+        }
+        public void setG(int _g) {
+            g = _g;
+        }
+
+        public int getF() {
+            return f;
+        }
+        public void setF(int _f) {
+            f = _f;
+        }
+      
+        public int getH(){
+            return h;
         }
     }
 
