@@ -19,7 +19,7 @@ public class AStar {
         openSet = new ArrayList<>();
         parent = new ArrayList<>();
 
-        openSet.add(new State(maze.getInitialStateX(), maze.getInitialStateY(), maze));
+        openSet.add(new State(maze.getInitial().getX(), maze.getInitial().getY(), maze));
 
         for (int i = 0; i < 60; i++){
             for (int j = 0; j < 80; j++){
@@ -31,51 +31,4 @@ public class AStar {
     /*
      * We will use g==0 as a conditional for checking if state is in openset and save time from iterating openset array
      */
-    public int manhattanDistance(MazeGen maze, State current){
-        return Math.abs(current.getX() - maze.getGoalStateX()) + Math.abs(current.getY() - maze.getGoalStateY());
-    }
-
-    // Class for States of coordinates
-    public class State{
-        private int x;
-        private int y;
-        private int g; // Cost from start to this node
-        private int f; // Cost from start to this node + h(this)
-        private int h; // h(this) manhattan distance
-
-        public State(int _x, int _y, MazeGen maze){
-            x = _x;
-            y = _y;
-            g = 0;  // Be careful for g starts with 0
-            f = 0;
-            h = manhattanDistance(maze, this); // h(this) is constant for the whole execution of the program, so it just needs to be calculated once;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        public int getG() {
-            return g;
-        }
-        public void setG(int _g) {
-            g = _g;
-        }
-
-        public int getF() {
-            return f;
-        }
-        public void setF(int _f) {
-            f = _f;
-        }
-      
-        public int getH(){
-            return h;
-        }
-    }
-
 }
