@@ -1,29 +1,31 @@
 // Class for States of coordinates
-public class State{
-    private int x;
-    private int y;
+public class MyState {
+    private int x, y;
     private int g; // Cost from start to this node
     private int f; // Cost from start to this node + h(this)
     private int h; // h(this) manhattan distance
+    private MyState parent; // Link to previous state on path
 
     // Constructor meant for Goal State
-    public State(int _x, int _y){
+    public MyState(int _x, int _y){
         x = _x;
         y = _y;
         g = 0;  // Be careful for g starts with 0
         f = 0;
         h = 0;
+        parent = null;
     }
 
-    public State(int _x, int _y, MazeGen maze){
+    public MyState(int _x, int _y, MazeGen maze){
         x = _x;
         y = _y;
         g = 0;  // Be careful for g starts with 0
-        f = 0;
         h = manhattanDistance(maze, this); // h(this) is constant for the whole execution of the program, so it just needs to be calculated once;
+        f = h;
+        parent = null;
     }
 
-    public int manhattanDistance(MazeGen maze, State current){
+    public int manhattanDistance(MazeGen maze, MyState current){
         return Math.abs(current.getX() - maze.getGoal().getX()) + Math.abs(current.getY() - maze.getGoal().getY());
     }
 
@@ -40,6 +42,7 @@ public class State{
     }
     public void setG(int _g) {
         g = _g;
+        f = h + g ; //updated f
     }
 
     public int getF() {
@@ -51,5 +54,29 @@ public class State{
 
     public int getH(){
         return h;
+    }
+
+    public MyState getParent() {
+        return parent;
+    }
+
+    public void setParent(MyState parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public boolean equals(Object o){
+        boolean res = false;
+        if(o instanceof MyState){
+            MyState z = (MyState) o;
+            if(this.hashCode() == z.hashCode())
+                res = true;
+        }
+    return res;
+    }
+
+    @Override
+    public int hashCode() {
+        return (((this.getX() + this.getY()) * (this.getY() + this.getX() + 1)) / 2) + this.getY() ;
     }
 }

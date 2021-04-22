@@ -3,8 +3,8 @@ import java.util.Random;
 
 public class MazeGen {
     private char[][] maze;
-    private State initial;
-    private State goal;
+    private MyState initial;
+    private MyState goal;
 
     public MazeGen() {
         this.maze = new char[60][80];
@@ -29,7 +29,7 @@ public class MazeGen {
             while (j < 80) {
                 int random = ran.nextInt(10);
                 if (random < 3) {
-                    maze[i][j] = '*';
+                    maze[i][j] = '█';
                 }
                 ++j;
             }
@@ -46,20 +46,20 @@ public class MazeGen {
             randj = ran.nextInt(80);
         }
         maze[randi][randj] = 'G';
-        this.goal = new State(randi, randj);
+        this.goal = new MyState(randi, randj);
         while (maze[randi][randj] != ' ') {
             randi = ran.nextInt(60);
             randj = ran.nextInt(80);
         }
         maze[randi][randj] = 'I';
-        this.initial = new State(randi, randj, this);
+        this.initial = new MyState(randi, randj, this);
     }
 
-    public State getInitial() {
+    public MyState getInitial() {
         return initial;
     }
 
-    public State getGoal() {
+    public MyState getGoal() {
         return goal;
     }
 
@@ -78,6 +78,13 @@ public class MazeGen {
     }
     */
 
+    public void addToPath(int x, int y) {
+        maze[x][y] = '+';
+    }
+
+    public char getNode(int x, int y){
+        return maze[x][y];
+    }
 
     @Override
     public String toString() {
@@ -102,5 +109,6 @@ public class MazeGen {
         }
         return res;
     }
+
 }
 

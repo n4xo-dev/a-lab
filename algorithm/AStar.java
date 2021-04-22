@@ -1,6 +1,5 @@
-import java.lang.Math;
+
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,8 +10,8 @@ public class AStar {
     private Boolean[][] closedSet;  // Set of nodes already evaluated, for those not evaluated 0, for those evaluated 1 (or any number besides 0).
                                     // I think using an array like this can be very time-efficient when it comes to checking whether a node has been evaluated
                                     // Even though it may not be very space-efficient
-    private List<State> openSet;    // Set of tentative nodes to be evaluated
-    private List<State> parent;     //Navigated (possible name)  // Map of navigated nodes
+    private List<MyState> openSet;    // Set of tentative nodes to be evaluated
+    //private List<MyState> parent;     //Navigated (possible name)  // Map of navigated nodes
     /*
     When the A* finishes, we should send parent to Maze,
     change the content of maze with parent path, and call Maze.toString to show the results
@@ -20,8 +19,11 @@ public class AStar {
 
     public AStar(MazeGen maze){
         closedSet = new Boolean[60][80];
-        openSet = new OrderedStates<>(new State(maze.getInitial().getX(), maze.getInitial().getY(), maze));
-        parent = new ArrayList<>();
+        openSet = new LinkedList<>();
+        //parent = new ArrayList<>(); // Possible not needed if every State has it's own parent State to reconstruct path
+
+        openSet.add(maze.getInitial());
+
 
         for (int i = 0; i < 60; i++){
             for (int j = 0; j < 80; j++){
@@ -29,37 +31,93 @@ public class AStar {
             }
         }
     }
-    
 
     public void solveMaze(MazeGen maze){
-        State current;
+        MyState current = null;
+        boolean success = false;
+
         while (!openSet.isEmpty()){
-            // Beware of getFirst() implementation (might need to Override)
-            current = openSet.getFirst(); // Ordered list in ascending order, first element is the most recent one
-            
+
+            current = getBestOpenState();
+            if(current.getX() == maze.getGoal().getX() && current.getY() == maze.getGoal().getY()){
+                success = true;
+                break;
+            }
+            openSet.remove(current);
+            closeState(current);
+            //System.out.println("Estoy dando vueltas");
+            for (MyState neighbor : neighbors(current, maze)) {
+                if(isClosed(neighbor))
+                    continue;
+                int tentative_g = current.getG() + 1;
+                if (neighbor.getG() == 0 || tentative_g < neighbor.getG()){
+                    boolean unopened = (neighbor.getG() == 0) ? true : false; // if g(neighbor) = 0 -> neighbor is not in openSet
+                    neighbor.setParent(current);
+                    neighbor.setG(tentative_g);
+                    if(unopened){
+                        openSet.add(neighbor);
+                    }
+
+                }
+            }
         }
+
+        if(!success) {
+            System.out.println("No path found.");
+            reconstructPath(maze, current);
+        }
+        else
+            reconstructPath(maze, current);
+        
        
     }
-    
-    private class OrderedStates{
-        private List<State> list;
 
-        public OrderedStates(){
-            list = new LinkedList<>();
-        }
-
-        public OrderedStates(State s){
-            list = new LinkedList<>();
-            list.add(s);
-        }
-        
-        @Override
-        public add(State s){
-            // Add in order using binary search
-            // This way, no need to reorder afterwards
-        }
+    private boolean isClosed(MyState state) {
+        return (closedSet[state.getX()][state.getY()]);
     }
 
+    private ArrayList<MyState> neighbors(MyState current, MazeGen maze) {
+        ArrayList<MyState> result = new ArrayList<>();
+
+        int[][] possibleNeighbors = {
+                {current.getX(), current.getY() + 1},
+                {current.getX() + 1, current.getY()},
+                {current.getX(), current.getY() - 1},
+                {current.getX() - 1, current.getY()}
+        };
+
+        for (int[] pn : possibleNeighbors) {
+            if(pn[0] > 0 && pn[0] < 60 && pn[1] > 0 && pn[1] < 80 && maze.getNode(pn[0], pn[1]) != '*'){
+                result.add(new MyState(pn[0], pn[1], maze));
+            }
+        }
+
+        return result;
+    }
+
+    private void closeState(MyState state) {
+        closedSet[state.getX()][state.getY()] = true;
+    }
+
+    private MyState getBestOpenState(){
+        MyState aux = openSet.get(0); // Possible error //TODO
+        for(MyState s : openSet){
+            if(s.getF() <= aux.getF()){
+                aux = s;
+            }
+        }
+        return aux;
+    }
+    
+    private void reconstructPath(MazeGen maze, MyState current){
+        current = current.getParent();
+
+        while(current.getParent() != null){
+            maze.addToPath(current.getX(),current.getY());
+            //System.out.println(current.getH() + " : " + current.getF() );
+            current = current.getParent();
+        }
+    }
     /*
      * We will use g==0 as a conditional for checking if state is in openset and save time from iterating openset array
      * And has to be changed in the execution of the program
@@ -69,7 +127,5 @@ public class AStar {
      *  And transforming parent into a copy of maze, which is going to be changed and 
      *  returned has the final maze, If Java uses pointers, this one would be more efficient
      */
-    
-    
 
 }
