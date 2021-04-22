@@ -11,19 +11,11 @@ public class AStar {
                                     // I think using an array like this can be very time-efficient when it comes to checking whether a node has been evaluated
                                     // Even though it may not be very space-efficient
     private List<MyState> openSet;    // Set of tentative nodes to be evaluated
-    //private List<MyState> parent;     //Navigated (possible name)  // Map of navigated nodes
-    /*
-    When the A* finishes, we should send parent to Maze,
-    change the content of maze with parent path, and call Maze.toString to show the results
-    */
 
     public AStar(MazeGen maze){
         closedSet = new Boolean[60][80];
         openSet = new LinkedList<>();
-        //parent = new ArrayList<>(); // Possible not needed if every State has it's own parent State to reconstruct path
-
         openSet.add(maze.getInitial());
-
 
         for (int i = 0; i < 60; i++){
             for (int j = 0; j < 80; j++){
@@ -45,7 +37,7 @@ public class AStar {
             }
             openSet.remove(current);
             closeState(current);
-            //System.out.println("Estoy dando vueltas");
+
             for (MyState neighbor : neighbors(current, maze)) {
                 if(isClosed(neighbor))
                     continue;
@@ -64,7 +56,6 @@ public class AStar {
 
         if(!success) {
             System.out.println("No path found.");
-            reconstructPath(maze, current);
         }
         else
             reconstructPath(maze, current);
@@ -87,7 +78,7 @@ public class AStar {
         };
 
         for (int[] pn : possibleNeighbors) {
-            if(pn[0] > 0 && pn[0] < 60 && pn[1] > 0 && pn[1] < 80 && maze.getNode(pn[0], pn[1]) != '*'){
+            if(pn[0] > 0 && pn[0] < 60 && pn[1] > 0 && pn[1] < 80 && maze.getNode(pn[0], pn[1]) != '█'){
                 result.add(new MyState(pn[0], pn[1], maze));
             }
         }
@@ -100,7 +91,7 @@ public class AStar {
     }
 
     private MyState getBestOpenState(){
-        MyState aux = openSet.get(0); // Possible error //TODO
+        MyState aux = openSet.get(0);
         for(MyState s : openSet){
             if(s.getF() <= aux.getF()){
                 aux = s;
@@ -114,7 +105,6 @@ public class AStar {
 
         while(current.getParent() != null){
             maze.addToPath(current.getX(),current.getY());
-            //System.out.println(current.getH() + " : " + current.getF() );
             current = current.getParent();
         }
     }

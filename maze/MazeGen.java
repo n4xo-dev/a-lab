@@ -63,21 +63,6 @@ public class MazeGen {
         return goal;
     }
 
-    /*
-    Implementation for showing path:
-    -- In AStar.java:
-
-    for each state in parent{
-        setState+(state.getX(), state.getY());
-    }
-
-    -- In MazeGen.java:
-
-    setState+(int x, int y){
-     maze[x,y] = '+';
-    }
-    */
-
     public void addToPath(int x, int y) {
         maze[x][y] = '+';
     }
